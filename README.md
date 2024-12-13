@@ -1,4 +1,4 @@
-Todo App
+#Todo App
 A Flutter application to manage your notes efficiently. This app uses modern state management and persistence techniques to provide a seamless user experience.
 
 Table of Contents

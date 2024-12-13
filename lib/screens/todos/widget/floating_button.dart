@@ -28,7 +28,7 @@ class FloatingButtonWidget extends StatelessWidget {
               curve: Curves.easeInOut,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Form(
-                key: controller.formkey,
+                key: controller.formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,

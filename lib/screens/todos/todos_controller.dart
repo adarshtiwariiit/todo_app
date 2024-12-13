@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todo_app/api_calls/models/todo_%20model.dart';
 import 'package:todo_app/api_calls/services/common_service.dart';
 import 'package:todo_app/screens/todos/widget/description_dialog.dart';
 import 'package:todo_app/utils/constants/app_constants.dart';
+
+import '../../api_calls/models/todo_ model.dart';
 
 class TodosController extends GetxController {
   final CommonService commonService = Get.find<CommonService>();
@@ -12,7 +13,7 @@ class TodosController extends GetxController {
   RxBool isAddingItem = false.obs;
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  final formkey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   final dialogTitleController = TextEditingController();
   final dialogDescriptionController = TextEditingController();
@@ -34,40 +35,42 @@ class TodosController extends GetxController {
   Future<void> getTodoList() async {
     final List<dynamic> data =
         await commonService.getValue(AppConstants.todoList) ?? [];
-
     todoList.addAll(TodoListModel.fromJson(data).todos);
   }
 
   Future<void> toggleFloatingButton() async {
     FocusManager.instance.primaryFocus!.unfocus();
-    if (isAddingItem.value && formkey.currentState!.validate()) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (nameController.text.isEmpty) {
-        isAddingItem.value = !isAddingItem.value;
-        return;
+
+    if (isAddingItem.value) {
+      if (formKey.currentState!.validate()) {
+        await addTodo();
       }
-      final TodoModel todo = TodoModel(
+    } else {
+      isAddingItem.value = true;
+    }
+  }
+
+  Future<void> addTodo() async {
+    if (nameController.text.isNotEmpty) {
+      final todo = TodoModel(
         title: nameController.text,
         description: descriptionController.text,
         isCompleted: false,
       );
       todoList.add(todo);
-      final data = TodoListModel(todos: todoList);
-      await commonService.saveValue(AppConstants.todoList, data.toJson());
-
+      await saveTodos();
       nameController.clear();
       descriptionController.clear();
-      isAddingItem.value = !isAddingItem.value;
-      return;
-    }
-    if (!isAddingItem.value) {
-      isAddingItem.value = !isAddingItem.value;
+      isAddingItem.value = false;
     }
   }
 
-  Future<void> tileTapCallback(
-    int index,
-  ) async {
+  Future<void> saveTodos() async {
+    final data = TodoListModel(todos: todoList);
+    await commonService.saveValue(AppConstants.todoList, data.toJson());
+  }
+
+  Future<void> tileTapCallback(int index) async {
     dialogTitleController.text = todoList[index].title ?? "Title";
     dialogDescriptionController.text =
         todoList[index].description ?? "Description";
@@ -76,28 +79,25 @@ class TodosController extends GetxController {
 
   Future<void> dialogSaveCallback(int index) async {
     if (dialogFormKey.currentState!.validate()) {
-      final TodoModel todo = TodoModel(
+      final todo = TodoModel(
         title: dialogTitleController.text,
         description: dialogDescriptionController.text,
         isCompleted: todoList[index].isCompleted,
       );
       todoList[index] = todo;
-      final data = TodoListModel(todos: todoList);
-      await commonService.saveValue(AppConstants.todoList, data.toJson());
+      await saveTodos();
       Get.back();
     }
   }
 
   Future<void> checkBoxCallback(bool value, int index) async {
     todoList[index].isCompleted = value;
-    final data = TodoListModel(todos: todoList);
-    await commonService.saveValue(AppConstants.todoList, data.toJson());
+    await saveTodos();
     todoList.refresh();
   }
 
-  void delteTodoItem(int index) {
+  void deleteTodoItem(int index) {
     todoList.removeAt(index);
-    final data = TodoListModel(todos: todoList);
-    commonService.saveValue(AppConstants.todoList, data.toJson());
+    saveTodos();
   }
 }

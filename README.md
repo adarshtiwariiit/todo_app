@@ -9,9 +9,9 @@
     <p>A Flutter application to manage your notes efficiently. This app uses modern state management and persistence techniques to provide a seamless user experience.</p>
     <hr>
     <h2 id="features">Features</h2>
-  <img src="path/to/image.jpg" alt="Home screen" width="500" height="300">
-    <ul>
+    <ul><img src="https://github.com/user-attachments/assets/f56e61be-ce86-4299-89a4-161adf103506" alt="Home screen" width="300" height="650">
         <li><strong>Add Notes:</strong> Create notes effortlessly.</li>
+      <img src="https://github.com/user-attachments/assets/70d8f254-a1b0-45b6-8fda-a35bb2a19aa0" alt="Home screen" width="300" height="650">
         <li><strong>Delete Notes:</strong> Swipe to delete notes with Flutter Slidable.</li>
         <li><strong>Offline Persistence:</strong> Save notes locally using Hive, ensuring they are accessible even without an internet connection.</li>
         <li><strong>Clean Architecture:</strong> Structured to enhance maintainability and scalability.</li>
